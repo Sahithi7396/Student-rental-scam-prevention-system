@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeNest – Student Rental Scam Prevention</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════ NAV ═══════════════════════════════════ -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <span class="logo-icon">🛡️</span>
+        <span class="logo-text">SafeNest</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#search">Find Rentals</a></li>
+        <li><a href="#detector">Scam Check</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#agreement">Agreement</a></li>
+        <li><a href="#report">Report</a></li>
+      </ul>
+      <button class="nav-cta" onclick="document.getElementById('search').scrollIntoView({behavior:'smooth'})">Get Started</button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-badge">Built for Students. Backed by Community.</div>
+    <h1 class="hero-title">
+      Find rentals you can<br /><em>actually trust.</em>
+    </h1>
+    <p class="hero-subtitle">
+      SafeNest helps students detect scams, verify landlords, and share honest reviews — 
+      before you pay a single rupee in advance.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('detector').scrollIntoView({behavior:'smooth'})">
+        🛡️ Check a Rental
+      </button>
+      <button class="btn-secondary" onclick="document.getElementById('search').scrollIntoView({behavior:'smooth'})">
+        🔍 Browse Near Me
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span id="stat-reports">0</span><small>Scams Reported</small></div>
+      <div class="stat"><span id="stat-reviews">0</span><small>Community Reviews</small></div>
+      <div class="stat"><span>24/7</span><small>Risk Detection</small></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ SEARCH ═══════════════════════════════════ -->
+  <section class="section" id="search">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>📍 Find Rentals Near You</h2>
+        <p>Search verified listings near your college. Location data is real-time via your browser.</p>
+      </div>
+
+      <div class="search-bar-row">
+        <input type="text" id="search-city" placeholder="Enter city or area (e.g. Vijayawada, Hyderabad)" class="input-field" />
+        <input type="text" id="search-college" placeholder="College name (optional)" class="input-field" />
+        <select id="search-type" class="input-field">
+          <option value="">All Types</option>
+          <option value="pg">PG / Hostel</option>
+          <option value="flat">Flat / Apartment</option>
+          <option value="room">Single Room</option>
+        </select>
+        <button class="btn-primary" id="btn-search">Search</button>
+        <button class="btn-secondary" id="btn-locate" title="Use my location">📍 Locate Me</button>
+      </div>
+
+      <div id="location-status" class="location-status hidden"></div>
+
+      <!-- API-ready listings grid -->
+      <div id="listings-grid" class="listings-grid"></div>
+      <div id="listings-empty" class="empty-state hidden">
+        <p>No listings found. Try a different area or be the first to add one!</p>
+      </div>
+
+      <!-- Add listing button -->
+      <div style="text-align:center; margin-top:1.5rem;">
+        <button class="btn-secondary" id="btn-add-listing">+ Add a Listing</button>
+      </div>
+
+      <!-- Add listing form -->
+      <div id="add-listing-form" class="card hidden" style="margin-top:1rem;">
+        <h3>Add a New Listing</h3>
+        <div class="form-grid">
+          <input type="text" id="l-name" placeholder="Property / PG Name *" class="input-field" />
+          <input type="text" id="l-area" placeholder="Area / Locality *" class="input-field" />
+          <input type="text" id="l-city" placeholder="City *" class="input-field" />
+          <select id="l-type" class="input-field">
+            <option value="pg">PG / Hostel</option>
+            <option value="flat">Flat / Apartment</option>
+            <option value="room">Single Room</option>
+          </select>
+          <input type="number" id="l-rent" placeholder="Monthly Rent (₹) *" class="input-field" />
+          <input type="number" id="l-advance" placeholder="Advance / Deposit (₹)" class="input-field" />
+          <input type="text" id="l-landlord" placeholder="Landlord / Owner Name" class="input-field" />
+          <input type="text" id="l-contact" placeholder="Contact Number" class="input-field" />
+        </div>
+        <textarea id="l-amenities" placeholder="Amenities (e.g. WiFi, AC, Food, Parking)" class="input-field textarea" rows="2"></textarea>
+        <button class="btn-primary" id="btn-submit-listing">Submit Listing</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ SCAM DETECTOR ═══════════════════════════════════ -->
+  <section class="section alt-bg" id="detector">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>🛡️ Scam Risk Detector</h2>
+        <p>Answer a few questions about the rental offer. Our logic-based system scores the risk instantly.</p>
+      </div>
+
+      <div class="detector-layout">
+        <div class="card detector-form">
+          <h3>Rental Details</h3>
+
+          <label class="form-label">Monthly Rent (₹)</label>
+          <input type="number" id="d-rent" placeholder="e.g. 8000" class="input-field" />
+
+          <label class="form-label">Advance / Deposit Demanded (₹)</label>
+          <input type="number" id="d-advance" placeholder="e.g. 40000" class="input-field" />
+
+          <label class="form-label">City of Rental</label>
+          <input type="text" id="d-city" placeholder="e.g. Hyderabad" class="input-field" />
+
+          <label class="form-label">Landlord Behavior Flags</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" id="f-nid" /> Landlord refused to show ID proof</label>
+            <label><input type="checkbox" id="f-nagree" /> No written agreement offered</label>
+            <label><input type="checkbox" id="f-pressure" /> Pressuring for immediate advance payment</label>
+            <label><input type="checkbox" id="f-novisit" /> Property visit not allowed before paying</label>
+            <label><input type="checkbox" id="f-online" /> Deal is entirely online, no meeting</label>
+            <label><input type="checkbox" id="f-cheap" /> Rent seems unusually low for the area</label>
+            <label><input type="checkbox" id="f-cash" /> Advance demanded in cash only</label>
+            <label><input type="checkbox" id="f-noreceipt" /> No receipt/acknowledgment for payment</label>
+          </div>
+
+          <button class="btn-primary" id="btn-detect" style="width:100%;margin-top:1rem;">Analyze Risk →</button>
+        </div>
+
+        <div class="detector-result" id="detector-result">
+          <div class="result-placeholder">
+            <span class="result-icon-big">🛡️</span>
+            <p>Fill in the form and click <strong>Analyze Risk</strong> to see your scam risk score.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ TRUST SCORES ═══════════════════════════════════ -->
+  <section class="section" id="trust">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>🔐 Trust Score Leaderboard</h2>
+        <p>Listings ranked by community trust — based on reviews, reports, and profile completeness.</p>
+      </div>
+      <div id="trust-list" class="trust-list"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ REVIEWS ═══════════════════════════════════ -->
+  <section class="section alt-bg" id="reviews">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>👥 Community Reviews</h2>
+        <p>Real students, real experiences. Help others by sharing yours.</p>
+      </div>
+
+      <div class="reviews-layout">
+        <div id="reviews-list" class="reviews-list">
+          <div class="empty-state" id="reviews-empty">No reviews yet. Be the first to add one!</div>
+        </div>
+
+        <div class="card review-form">
+          <h3>Add a Review</h3>
+          <input type="text" id="rv-property" placeholder="Property / PG Name *" class="input-field" />
+          <input type="text" id="rv-area" placeholder="Area / City *" class="input-field" />
+          <input type="text" id="rv-author" placeholder="Your name (or Anonymous)" class="input-field" />
+          <label class="form-label">Rating</label>
+          <div class="star-row" id="star-rating">
+            <span class="star" data-val="1">★</span>
+            <span class="star" data-val="2">★</span>
+            <span class="star" data-val="3">★</span>
+            <span class="star" data-val="4">★</span>
+            <span class="star" data-val="5">★</span>
+          </div>
+          <textarea id="rv-text" placeholder="Share your experience — was the landlord transparent? Was the condition as described?" class="input-field textarea" rows="4"></textarea>
+          <div class="checkbox-group" style="margin:0.5rem 0;">
+            <label><input type="checkbox" id="rv-scam" /> This landlord showed scam-like behavior</label>
+          </div>
+          <button class="btn-primary" id="btn-add-review" style="width:100%;">Submit Review</button>
+          <p id="review-msg" class="msg hidden"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ AGREEMENT CHECKER ═══════════════════════════════════ -->
+  <section class="section" id="agreement">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>📄 Agreement Checker</h2>
+        <p>Paste your rental agreement text. We'll scan it for critical missing clauses and red flags.</p>
+      </div>
+
+      <div class="agreement-layout">
+        <div class="card" style="flex:1">
+          <label class="form-label">Paste Agreement Text Below</label>
+          <textarea id="agree-text" class="input-field textarea" rows="12" placeholder="Paste the full text of your rental agreement here..."></textarea>
+          <button class="btn-primary" id="btn-check-agree" style="width:100%;margin-top:0.75rem;">Analyze Agreement →</button>
+        </div>
+
+        <div class="card agreement-result" id="agreement-result" style="flex:1">
+          <div class="result-placeholder">
+            <span class="result-icon-big">📄</span>
+            <p>Paste your agreement text and click <strong>Analyze Agreement</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ REPORT ═══════════════════════════════════ -->
+  <section class="section alt-bg" id="report">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>🚨 Report a Scam</h2>
+        <p>Protect the next student. Report a fraudulent landlord or suspicious listing.</p>
+      </div>
+
+      <div class="report-layout">
+        <div class="card report-form">
+          <h3>File a Report</h3>
+          <input type="text" id="rp-name" placeholder="Landlord / Owner Name *" class="input-field" />
+          <input type="text" id="rp-property" placeholder="Property Address / Area *" class="input-field" />
+          <input type="text" id="rp-city" placeholder="City *" class="input-field" />
+          <input type="text" id="rp-contact" placeholder="Landlord Phone / Email (if known)" class="input-field" />
+          <label class="form-label">Type of Scam</label>
+          <select id="rp-type" class="input-field">
+            <option value="">Select scam type</option>
+            <option value="advance">Advance taken, property not given</option>
+            <option value="fake">Fake/non-existent property</option>
+            <option value="overprice">Charged far above market rate</option>
+            <option value="noagree">Refused to give agreement</option>
+            <option value="harassment">Harassment / threatening behavior</option>
+            <option value="other">Other</option>
+          </select>
+          <textarea id="rp-desc" placeholder="Describe what happened in detail..." class="input-field textarea" rows="4"></textarea>
+          <input type="text" id="rp-reporter" placeholder="Your name (optional)" class="input-field" />
+          <button class="btn-danger" id="btn-report" style="width:100%;margin-top:0.5rem;">🚨 Submit Report</button>
+          <p id="report-msg" class="msg hidden"></p>
+        </div>
+
+        <div style="flex:1">
+          <h3 style="margin-bottom:1rem;">⚠️ Reported Listings</h3>
+          <div id="reports-list" class="reports-list">
+            <div class="empty-state" id="reports-empty">No reports yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="logo" style="margin-bottom:0.5rem;">
+        <span class="logo-icon">🛡️</span>
+        <span class="logo-text">SafeNest</span>
+      </div>
+      <p>A community-powered tool to protect students from rental fraud.</p>
+      <p style="opacity:0.5;font-size:0.8rem;margin-top:0.5rem;">
+        Data stored locally in your browser. No account required. 
+        <strong>API integrations are clearly marked as "API-ready".</strong>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
